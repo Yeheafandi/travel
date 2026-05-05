@@ -9,9 +9,9 @@ class TripModel {
   String price;
   String driverName;
   String driverId;
-  final String busId;      // تم التأكد من وجودها
-  final int totalSeats;    // تم التأكد من وجودها
-  List<int> reservedSeats;
+  final String busId;      
+  final int totalSeats;   
+  List<int> bookedSeats;
 
   TripModel({
     this.id,
@@ -24,7 +24,7 @@ class TripModel {
     required this.driverId,
     required this.busId,
     required this.totalSeats,
-    required this.reservedSeats,
+    required this.bookedSeats,
   });
 
   // تحويل البيانات القادمة من Firebase إلى كائن TripModel
@@ -40,7 +40,7 @@ class TripModel {
       driverId: data['driverId'] ?? '',
       busId: data['busId'] ?? '', // أضفنا هذا السطر
       totalSeats: data['totalSeats'] ?? 0, // أضفنا هذا السطر
-      reservedSeats: List<int>.from(data['reservedSeats'] ?? []),
+      bookedSeats: List<int>.from(data['bookedSeats'] ?? []),
     );
   }
 
@@ -56,7 +56,7 @@ class TripModel {
       'driverName': driverName,
       'busId': busId,           // أضفنا هذا السطر للحفظ
       'totalSeats': totalSeats, // أضفنا هذا السطر للحفظ
-      'reservedSeats': reservedSeats,
+      'reservedSeats': bookedSeats,
       'createdAt': FieldValue.serverTimestamp(), // أفضل من DateTime.now() للسيرفر
     };
   }

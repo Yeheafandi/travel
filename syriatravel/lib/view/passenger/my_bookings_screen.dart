@@ -29,7 +29,7 @@ class MyBookingsScreen extends StatelessWidget {
           : StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('bookings')
-                  .where('passengerId', isEqualTo: currentUserId)
+                  .where('userId', isEqualTo: currentUserId)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

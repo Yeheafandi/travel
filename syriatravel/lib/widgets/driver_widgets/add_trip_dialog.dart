@@ -106,11 +106,11 @@ void showAddTripDialog(BuildContext context) {
                               price: priceC.text,
                               driverName: controller
                                   .driverName
-                                  .value, // هذا هو اسم صاحب الباص
+                                  .value,
                               driverId: controller.currentUid,
                               busId: selectedBusId!,
                               totalSeats: bus['totalSeats'],
-                              reservedSeats: [],
+                              bookedSeats: [],
                             ),
                           );
                           Navigator.pop(context);

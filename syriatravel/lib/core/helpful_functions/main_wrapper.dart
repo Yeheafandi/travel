@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:syriatravel/controllers/navigation_controller.dart';
 import 'package:syriatravel/view/passenger/main_passenger_screen.dart';
 import 'package:syriatravel/view/passenger/my_bookings_screen.dart';
-import 'package:syriatravel/view/passenger/profile_screen.dart'; 
+import 'package:syriatravel/view/passenger/profile_screen.dart';
+import 'package:syriatravel/view/passenger/search_trip_screen.dart';
 
 class MainWrapper extends StatelessWidget {
   MainWrapper({super.key});
@@ -12,9 +13,9 @@ class MainWrapper extends StatelessWidget {
 
   final List<Widget> screens = [
     PassengerHomeScreen(),
-    const Center(child: Text("صفحة البحث")),
-    const MyBookingsScreen(), 
-    const ProfileScreen(), 
+    SearchTripScreen(),
+    const MyBookingsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -22,10 +23,12 @@ class MainWrapper extends StatelessWidget {
     const Color primaryGreen = Color(0xFF1B5E20);
 
     return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: navController.selectedIndex.value,
-        children: screens,
-      )),
+      body: Obx(
+        () => IndexedStack(
+          index: navController.selectedIndex.value,
+          children: screens,
+        ),
+      ),
       bottomNavigationBar: Obx(() => _buildBottomNav(primaryGreen)),
     );
   }

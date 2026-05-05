@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:syriatravel/controllers/bus_seat_controller.dart';
 import 'package:syriatravel/models/trip_model.dart';
 import 'package:syriatravel/view/bus_screen/bus_seat_painter.dart';
+import 'package:syriatravel/widgets/passenger_widgets/booking_dialog.dart';
 
 class BusSeatScreen extends StatelessWidget {
   final TripModel trip;
@@ -43,7 +44,7 @@ class BusSeatScreen extends StatelessWidget {
         }
 
         bool isFull =
-            controller.bookedSeats.length >= controller.totalSeats.value;
+            controller.reservedSeats.length >= controller.totalSeats.value;
 
         return Column(
           children: [
@@ -233,9 +234,20 @@ class BusSeatScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
-                    onPressed: hasSelection
-                        ? () => controller.confirmBooking()
-                        : null,
+                    onPressed: () {
+                      if (controller.selectedSeats.isEmpty) {
+                        Get.snackbar(
+                          "تنبيه",
+                          "يرجى اختيار مقعد واحد على الأقل",
+                        );
+                      } else {
+                        BookingDialog.show(
+                          Get.context!, // استخدام Get.context بدلاً من context
+                          trip,
+                          controller.selectedSeats.toList(),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryGreen,
                       disabledBackgroundColor: Colors.grey.shade300,

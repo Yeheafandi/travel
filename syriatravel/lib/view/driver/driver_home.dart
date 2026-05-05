@@ -289,7 +289,7 @@ class DriverHomeScreen extends StatelessWidget {
                                     controller.driverName.value.isNotEmpty
                                     ? controller.driverName.value
                                     : "كابتن",
-                                driverId: currentDriverId,
+                                driverId: currentDriverId, time: '', reservedSeats: [],
                               );
 
                               await controller.addTrip(newTrip);

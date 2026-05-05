@@ -12,13 +12,8 @@ class BookingController extends GetxController {
   var searchResults = <TripModel>[].obs;
   var isSearching = false.obs;
 
-  // هذه هي الدالة التي يستدعيها زر "تأكيد" في الواجهة (UI)
-  void confirmBooking(TripModel trip) {
-    // جلب اسم المستخدم الحالي من Firebase Auth
-    String? passengerName = _auth.currentUser?.displayName ?? "مسافر غير معروف";
-
-    // استدعاء دالة الحجز الفعلية
-    bookTrip(trip, passengerName);
+  void confirmBooking(TripModel trip, String name, String phone, String idNumber) {
+    bookTrip(trip, name, phone: phone, idNumber: idNumber);
   }
 
   Future<void> searchTrips(String from, String to) async {
@@ -35,8 +30,7 @@ class BookingController extends GetxController {
       if (querySnapshot.docs.isNotEmpty) {
         searchResults.value = querySnapshot.docs
             .map(
-              (doc) =>
-                  TripModel.fromMap(doc.data() as Map<String, dynamic>, doc.id),
+              (doc) => TripModel.fromMap(doc.data() as Map<String, dynamic>, doc.id),
             )
             .toList();
       } else {
@@ -58,44 +52,48 @@ class BookingController extends GetxController {
     }
   }
 
-  Future<void> bookTrip(TripModel trip, String passengerName) async {
+  // 3. دالة حجز الرحلة (تصحيح المعاملات وإضافة حالة التحميل)
+  Future<void> bookTrip(TripModel trip, String name, {required String phone, required String idNumber}) async {
     try {
-      isLoading.value = true;
-      String? uid = _auth.currentUser?.uid;
-
-      if (uid == null) {
-        Get.snackbar("تنبيه", "يجب تسجيل الدخول أولاً");
+      isLoading.value = true; // تفعيل مؤشر التحميل
+      
+      String? currentUserId = _auth.currentUser?.uid;
+      
+      if (currentUserId == null) {
+        Get.snackbar("خطأ", "يجب تسجيل الدخول أولاً");
         return;
       }
 
       await _firestore.collection('bookings').add({
         'tripId': trip.id,
-        'passengerId': uid,
-        'driverId': trip.driverId,
+        'passengerId': currentUserId,
+        'passengerName': name,
+        'phoneNumber': phone,
+        'identityNumber': idNumber,
         'fromCity': trip.fromCity,
         'toCity': trip.toCity,
         'price': trip.price,
-        'driverName': trip.driverName,
-        'passengerName': passengerName,
-        'bookingDate':
-            FieldValue.serverTimestamp(), 
-        'status': 'pending',
+        'status': 'pending', 
+        'bookingDate': FieldValue.serverTimestamp(),
       });
 
       Get.snackbar(
         "تم الحجز",
         "تم إرسال طلب حجزك بنجاح لسائق الرحلة",
-        backgroundColor: Colors.green.withOpacity(0.1),
+        backgroundColor: Colors.green.withOpacity(0.7),
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
+      
     } catch (e) {
       Get.snackbar(
         "خطأ",
         "فشل الحجز: $e",
-        backgroundColor: Colors.red.withOpacity(0.1),
+        backgroundColor: Colors.red.withOpacity(0.7),
+        colorText: Colors.white,
       );
     } finally {
-      isLoading.value = false;
+      isLoading.value = false; // إيقاف مؤشر التحميل
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syriatravel/widgets/passenger_widgets/booking_dialog.dart';
 import 'package:syriatravel/widgets/passenger_widgets/home_header.dart';
 import 'package:syriatravel/widgets/passenger_widgets/passenger_widgets.dart';
 import 'package:syriatravel/widgets/passenger_widgets/search_card.dart';
@@ -15,7 +16,7 @@ class PassengerHomeScreen extends StatelessWidget {
   PassengerHomeScreen({super.key});
 
   final BookingController bookingController = Get.put(BookingController());
-  final NavigationController navController =  Get.put(NavigationController());
+  final NavigationController navController = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,7 @@ class PassengerHomeScreen extends StatelessWidget {
 
               _buildTripsStream(),
 
-              const SizedBox(
-                height: 100,
-              ),
+              const SizedBox(height: 100),
             ],
           ),
         ),
@@ -79,8 +78,7 @@ class PassengerHomeScreen extends StatelessWidget {
 
         return ListView.builder(
           shrinkWrap: true,
-          physics:
-              const NeverScrollableScrollPhysics(), 
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var doc = snapshot.data!.docs[index];
@@ -91,90 +89,11 @@ class PassengerHomeScreen extends StatelessWidget {
 
             return TripListItem(
               trip: trip,
-              onTap: () => _showBookingConfirmDialog(context, trip),
+              onTap: () => BookingDialog.show(context, trip),
             );
           },
         );
       },
     );
   }
-
-  void _showBookingConfirmDialog(BuildContext context, TripModel trip) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 50,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "تأكيد حجز الرحلة",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
-              Text(
-                "هل أنت متأكد من رغبتك في حجز مقعد في الرحلة المتوجهة من ${trip.fromCity} إلى ${trip.toCity}؟",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 25),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text("إلغاء"),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                        bookingController.bookTrip(
-                          trip,
-                          "",
-                        ); 
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B5E20),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text("تأكيد الحجز"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-
- 
 }

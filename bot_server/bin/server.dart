@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bot_server/bot/bot_controller.dart';
+import 'package:bot_server/services/telegram_api_service.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
-
-import '../lib/bot/bot_controller.dart';
-import '../lib/services/telegram_api_service.dart';
 
 void main() async {
   final telegramApiService = TelegramApiService();

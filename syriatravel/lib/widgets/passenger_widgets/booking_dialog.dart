@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/view/bus_screen/bus_seat_screen.dart';
 import '../../../models/trip_model.dart';
 import '../../../controllers/booking_controller.dart';
 
 class BookingDialog {
-  static void show(BuildContext context, TripModel trip) {
+  // أضفنا selectedSeats كبارامتر مطلوب هنا
+  static void show(BuildContext context, TripModel trip, List<int> selectedSeats) {
     final BookingController bookingController = Get.find<BookingController>();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
@@ -14,16 +14,18 @@ class BookingDialog {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
+      backgroundColor: Colors.transparent, // لجعل الحواف الدائرية تظهر بشكل أفضل
       builder: (context) {
-        return Padding(
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          ),
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
             left: 25,
             right: 25,
-            top: 25,
+            top: 15,
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -34,6 +36,12 @@ class BookingDialog {
                 const Text(
                   "تأكيد تفاصيل الحجز",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                // عرض المقاعد المختارة للتأكيد
+                Text(
+                  "المقاعد المختارة: ${selectedSeats.join(', ')}",
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(nameController, "الاسم الكامل", Icons.person),
@@ -58,8 +66,8 @@ class BookingDialog {
                   phoneController,
                   idController,
                   bookingController,
+                  selectedSeats, // تمرير المقاعد للدالة
                 ),
-                const SizedBox(height: 30),
               ],
             ),
           ),
@@ -93,6 +101,7 @@ class BookingDialog {
         labelText: label,
         prefixIcon: Icon(icon, color: const Color(0xFF1B5E20)),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       ),
     );
   }
@@ -103,6 +112,7 @@ class BookingDialog {
     TextEditingController phone,
     TextEditingController id,
     BookingController controller,
+    List<int> selectedSeats,
   ) {
     return Row(
       children: [
@@ -111,9 +121,7 @@ class BookingDialog {
             onPressed: () => Get.back(),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text("إلغاء"),
           ),
@@ -128,28 +136,31 @@ class BookingDialog {
                   "يرجى إكمال كافة البيانات",
                   backgroundColor: Colors.redAccent,
                   colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
                 );
                 return;
               }
 
+              // إغلاق الدايالوج قبل البدء بالعملية
               Get.back();
 
+              // تنفيذ الحجز النهائي في قاعدة البيانات
               await controller.bookTrip(
-                trip,
-                name.text,
+                trip: trip,
+                passengerName: name.text,
                 phone: phone.text,
                 idNumber: id.text,
+                seats: selectedSeats, // يجب أن تستقبل دالة bookTrip قائمة المقاعد
               );
-
-              Get.to(() => BusSeatScreen());
+              
+              // بعد النجاح، يمكنك توجيه المستخدم لصفحة رحلاتي أو الرئيسية
+              Get.snackbar("تم الحجز", "تمت عملية الحجز بنجاح");
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1B5E20),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text("تأكيد الحجز"),
           ),

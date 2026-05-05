@@ -12,10 +12,7 @@ class BookingController extends GetxController {
   var searchResults = <TripModel>[].obs;
   var isSearching = false.obs;
 
-  void confirmBooking(TripModel trip, String name, String phone, String idNumber) {
-    bookTrip(trip, name, phone: phone, idNumber: idNumber);
-  }
-
+  // تحديث دالة البحث لتكون متوافقة مع التغييرات
   Future<void> searchTrips(String from, String to) async {
     try {
       isSearching.value = true;
@@ -34,28 +31,26 @@ class BookingController extends GetxController {
             )
             .toList();
       } else {
-        Get.snackbar(
-          "تنبيه",
-          "لا توجد رحلات متاحة بين هاتين المدينتين حالياً",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange.withOpacity(0.1),
-        );
+        Get.snackbar("تنبيه", "لا توجد رحلات متاحة حالياً");
       }
     } catch (e) {
-      Get.snackbar(
-        "خطأ",
-        "حدث خطأ أثناء البحث: $e",
-        backgroundColor: Colors.red.withOpacity(0.1),
-      );
+      Get.snackbar("خطأ", "حدث خطأ أثناء البحث: $e");
     } finally {
       isSearching.value = false;
     }
   }
 
-  // 3. دالة حجز الرحلة (تصحيح المعاملات وإضافة حالة التحميل)
-  Future<void> bookTrip(TripModel trip, String name, {required String phone, required String idNumber}) async {
+  // --- التعديل الجوهري هنا ---
+  // دالة حجز الرحلة المحدثة لاستقبال المقاعد والبيانات بنظام الأقواس المجعدة { }
+  Future<void> bookTrip({
+    required TripModel trip,
+    required String passengerName,
+    required String phone,
+    required String idNumber,
+    required List<int> seats, // إضافة قائمة المقاعد
+  }) async {
     try {
-      isLoading.value = true; // تفعيل مؤشر التحميل
+      isLoading.value = true;
       
       String? currentUserId = _auth.currentUser?.uid;
       
@@ -64,36 +59,46 @@ class BookingController extends GetxController {
         return;
       }
 
+      // 1. إضافة سجل الحجز في مجموعة 'bookings'
       await _firestore.collection('bookings').add({
         'tripId': trip.id,
         'passengerId': currentUserId,
-        'passengerName': name,
+        'passengerName': passengerName,
         'phoneNumber': phone,
         'identityNumber': idNumber,
+        'selectedSeats': seats, // حفظ المقاعد التي اختارها المستخدم
         'fromCity': trip.fromCity,
         'toCity': trip.toCity,
-        'price': trip.price,
+        'price': trip.price * seats.length, // حساب السعر الإجمالي بناءً على عدد المقاعد
         'status': 'pending', 
         'bookingDate': FieldValue.serverTimestamp(),
       });
 
+      // 2. تحديث المقاعد المحجوزة في مستند الرحلة (Trips) لمنع الآخرين من حجزها
+      // نستخدم arrayUnion لإضافة المقاعد الجديدة للمصفوفة الموجودة مسبقاً
+      await _firestore.collection('trips').doc(trip.id).update({
+        'bookedSeats': FieldValue.arrayUnion(seats),
+      });
+
       Get.snackbar(
-        "تم الحجز",
-        "تم إرسال طلب حجزك بنجاح لسائق الرحلة",
-        backgroundColor: Colors.green.withOpacity(0.7),
+        "تم الحجز بنجاح",
+        "تم حجز المقاعد: ${seats.join(', ')}",
+        backgroundColor: Colors.green,
         colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
       );
-      
+
+      // العودة للشاشة الرئيسية بعد الحجز
+      Get.offAllNamed('/home'); 
+
     } catch (e) {
       Get.snackbar(
-        "خطأ",
-        "فشل الحجز: $e",
-        backgroundColor: Colors.red.withOpacity(0.7),
+        "خطأ في الحجز",
+        e.toString(),
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     } finally {
-      isLoading.value = false; // إيقاف مؤشر التحميل
+      isLoading.value = false;
     }
   }
 }

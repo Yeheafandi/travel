@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/widgets/passenger_widgets/booking_dialog.dart';
+import 'package:syriatravel/view/bus_screen/bus_seat_screen.dart';
 import 'package:syriatravel/widgets/passenger_widgets/home_header.dart';
 import 'package:syriatravel/widgets/passenger_widgets/passenger_widgets.dart';
 import 'package:syriatravel/widgets/passenger_widgets/search_card.dart';
@@ -13,19 +13,23 @@ import '../../../controllers/navigation_controller.dart';
 import '../../../models/trip_model.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
-  PassengerHomeScreen({super.key});
+  PassengerHomeScreen({super.key,});
 
   final BookingController bookingController = Get.put(BookingController());
   final NavigationController navController = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
+
+
+
     const Color primaryGreen = Color(0xFF1B5E20);
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
       body: RefreshIndicator(
+        // تحسين الـ Refresh ليشمل إعادة جلب البيانات إذا لزم الأمر
         onRefresh: () async => await Future.delayed(const Duration(seconds: 1)),
         child: SingleChildScrollView(
           child: Column(
@@ -89,7 +93,10 @@ class PassengerHomeScreen extends StatelessWidget {
 
             return TripListItem(
               trip: trip,
-              onTap: () => BookingDialog.show(context, trip),
+              // التعديل هنا: ننتقل لشاشة المقاعد أولاً
+              onTap: () {
+                Get.to(() => BusSeatScreen(trip: trip));
+              },
             );
           },
         );

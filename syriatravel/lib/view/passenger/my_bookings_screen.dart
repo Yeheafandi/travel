@@ -64,10 +64,9 @@ class MyBookingsScreen extends StatelessWidget {
     Map<String, dynamic> booking,
     String bookingId,
   ) {
-    // 1. جلب البيانات والتأكد أنها قائمة (List)
+    // جلب المقاعد التي حجزها المستخدم حالياً
     var reservedData = booking['reservedSeats'];
     List<dynamic> seats = [];
-
     if (reservedData is List) {
       seats = reservedData;
     } else if (reservedData != null) {
@@ -75,10 +74,14 @@ class MyBookingsScreen extends StatelessWidget {
     }
 
     int seatsCount = seats.length;
-
     String seatsText = seats.map((s) => s.toString()).join(' , ');
 
+    // جلب إجمالي مقاعد الباص من بيانات الحجز
+    // تأكد أنك عند الحجز قمت بحفظ هذا الحقل باسم 'totalSeats'
+    int totalBusSeats = booking['totalSeats'] ?? 0;
+
     return Container(
+      // ... (باقي كود التنسيق كما هو)
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -153,11 +156,11 @@ class MyBookingsScreen extends StatelessWidget {
                     border: Border.all(color: primaryGreen.withOpacity(0.05)),
                   ),
                   // داخل Container تفاصيل المقاعد
+                  // داخل Container تفاصيل المقاعد في دالة _buildBookingCard
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        // أضفنا Expanded لضمان عدم حدوث Overflow إذا كانت المقاعد كثيرة
                         child: Row(
                           children: [
                             const Icon(
@@ -168,23 +171,36 @@ class MyBookingsScreen extends StatelessWidget {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                "المقاعد: ${seatsText.isEmpty ? 'غير محدد' : seatsText}",
+                                "مقاعدك: ${seatsText.isEmpty ? 'غير محدد' : seatsText}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
-                                overflow: TextOverflow
-                                    .ellipsis, // لضمان عدم خروج النص عن الشاشة
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Text(
-                        "$seatsCount مقاعد",
-                        style: TextStyle(
-                          color: primaryGreen,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      // عرض سعة الباص هنا
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "$seatsCount حجزت",
+                            style: TextStyle(
+                              color: primaryGreen,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (totalBusSeats > 0)
+                            Text(
+                              "من أصل $totalBusSeats مقعد",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 10,
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),

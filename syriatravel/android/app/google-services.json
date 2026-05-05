@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "447008476488",
+    "project_id": "syriatravel-d8d0f",
+    "storage_bucket": "syriatravel-d8d0f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447008476488:android:0926aacd5e21e1bfc6b77d",
+        "android_client_info": {
+          "package_name": "com.example.syriatravel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd5a7wQV41vKYANuqJfB3w3qIiZRkFzV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

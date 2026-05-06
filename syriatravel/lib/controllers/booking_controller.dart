@@ -41,7 +41,6 @@ class BookingController extends GetxController {
     }
   }
 
-
   Future<void> bookTrip({
     required TripModel trip,
     required String passengerName,
@@ -55,24 +54,21 @@ class BookingController extends GetxController {
 
       if (currentUserId == null) {
         Get.snackbar("خطأ", "يجب تسجيل الدخول أولاً");
+        isLoading.value = false; // مهم جداً إيقافه هنا
         return;
       }
 
-      // استخدام runTransaction لضمان دقة البيانات وتجنب حجز نفس المقعد مرتين
       await _firestore.runTransaction((transaction) async {
         DocumentReference tripRef = _firestore.collection('trips').doc(trip.id);
         DocumentSnapshot tripSnapshot = await transaction.get(tripRef);
 
-        if (!tripSnapshot.exists) {
-          throw Exception("الرحلة غير موجودة");
-        }
+        if (!tripSnapshot.exists) throw Exception("الرحلة غير موجودة");
 
-        // 1. إضافة سجل الحجز مع التأكد من اسم الحقل userId ليوافق قواعد Firestore
+        // إنشاء سجل الحجز
         DocumentReference bookingRef = _firestore.collection('bookings').doc();
         transaction.set(bookingRef, {
           'tripId': trip.id,
-          'userId':
-              currentUserId, // تم التعديل من passengerId إلى userId لموافقة القواعد
+          'userId': currentUserId,
           'passengerName': passengerName,
           'phoneNumber': phone,
           'identityNumber': idNumber,
@@ -80,36 +76,39 @@ class BookingController extends GetxController {
           'fromCity': trip.fromCity,
           'toCity': trip.toCity,
           'price': trip.price * seats.length,
-          'status': 'pending',
+          'status':
+              'confirmed', // اجعلها confirmed مباشرة إذا لم تكن تحتاج مراجعة
           'bookingDate': FieldValue.serverTimestamp(),
         });
 
-        // 2. تحديث الرحلة بإضافة المقاعد
+        // تحديث المقاعد في الرحلة
         transaction.update(tripRef, {
           'bookedSeats': FieldValue.arrayUnion(seats),
         });
       });
 
+      // إيقاف التحميل قبل إغلاق الواجهة
+      isLoading.value = false;
+
       Get.snackbar(
-        "تم الحجز بنجاح",
+        "نجاح",
         "تم حجز المقاعد: ${seats.join(', ')}",
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
 
-      Get.offAllNamed('/home');
+      // العودة من الديالوج
+      Get.back();
+      // العودة من شاشة المقاعد إلى الرئيسية (اختياري)
+      Future.delayed(const Duration(milliseconds: 500), () => Get.back());
     } catch (e) {
-      // طباعة الخطأ في الكونسول لمعرفة السبب الحقيقي (Permissions أم Data)
-      print("Booking Error: $e");
-
+      isLoading.value = false; // مهم جداً في حالة الخطأ
       Get.snackbar(
         "خطأ في الحجز",
-        "تأكد من اتصالك بالإنترنت وصلاحيات الوصول",
+        "فشلت العملية: $e",
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 }

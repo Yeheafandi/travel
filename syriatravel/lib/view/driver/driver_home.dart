@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/controllers/driver_controller.dart';
-import 'package:syriatravel/models/trip_model.dart';
 import 'package:syriatravel/widgets/driver_widgets/add_bus_dialog.dart'
     show showAddBusDialog;
 import 'package:syriatravel/widgets/driver_widgets/add_trip_dialog.dart';
+import 'package:syriatravel/widgets/driver_widgets/driver_trip_card.dart';
 
 class DriverHomeScreen extends StatelessWidget {
   DriverHomeScreen({super.key});
@@ -43,7 +43,10 @@ class DriverHomeScreen extends StatelessWidget {
                 itemCount: driverController.myTrips.length,
                 itemBuilder: (context, index) {
                   final trip = driverController.myTrips[index];
-                  return _buildTripCard(trip, driverController);
+                  return DriverTripCard(
+                    trip: trip,
+                    controller: driverController,
+                  );
                 },
               );
             }),
@@ -97,15 +100,34 @@ class DriverHomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          // إضافة زر الباص هنا
-          IconButton(
-            onPressed: () => showAddBusDialog(context),
-            icon: const Icon(
-              Icons.directions_bus_filled,
-              color: Colors.white,
-              size: 28,
+          GestureDetector(
+            onTap: () => showAddBusDialog(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.directions_bus_filled,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  "إضافة باص",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-            tooltip: "إضافة باص جديد",
           ),
         ],
       ),
@@ -146,27 +168,6 @@ class DriverHomeScreen extends StatelessWidget {
         ),
         Text(label, style: const TextStyle(color: Colors.grey)),
       ],
-    );
-  }
-
-  Widget _buildTripCard(TripModel trip, DriverController controller) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        title: Text("${trip.fromCity} ➔ ${trip.toCity}"),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("الوقت: ${trip.date} | ${trip.time}"),
-            Text("السائق: ${trip.driverName}"), // إظهار اسم صاحب الباص هنا
-          ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.red),
-          onPressed: () => controller.deleteTrip(trip.id!),
-        ),
-      ),
     );
   }
 }

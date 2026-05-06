@@ -54,9 +54,9 @@ class TripModel {
       'price': price,
       'driverId': driverId,
       'driverName': driverName,
-      'busId': busId,           // أضفنا هذا السطر للحفظ
-      'totalSeats': totalSeats, // أضفنا هذا السطر للحفظ
-      'reservedSeats': bookedSeats,
+      'busId': busId,         
+      'totalSeats': totalSeats, 
+      'bookedSeats': bookedSeats,
       'createdAt': FieldValue.serverTimestamp(), // أفضل من DateTime.now() للسيرفر
     };
   }

@@ -10,7 +10,7 @@ class BookingDialog {
     TripModel trip,
     List<int> selectedSeats,
   ) {
-    final BookingController bookingController = Get.put(BookingController());
+    final BookingController bookingController = Get.find<BookingController>();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
     final TextEditingController idController = TextEditingController();

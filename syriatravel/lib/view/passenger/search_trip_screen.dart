@@ -1,93 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/controllers/search_trip_controller.dart';
+import 'package:syriatravel/widgets/passenger_widgets/driver_search_field.dart';
+import 'package:syriatravel/widgets/passenger_widgets/filter_section.dart';
+import 'package:syriatravel/widgets/passenger_widgets/search_header.dart';
+import 'package:syriatravel/widgets/passenger_widgets/trip_ticket.dart';
+import '../../controllers/search_trip_controller.dart';
 
 class SearchTripScreen extends StatelessWidget {
   SearchTripScreen({super.key});
+
   final SearchTripController controller = Get.put(SearchTripController());
+  final Color primaryGreen = const Color(0xFF1B5E20);
 
   @override
   Widget build(BuildContext context) {
-    // حقن المتحكم
-
     return Scaffold(
-      appBar: AppBar(title: const Text("البحث عن رحلة"), centerTitle: true),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text(
+          "استكشف رحلتك",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: primaryGreen,
+        elevation: 0,
+      ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      onChanged: (v) => controller.fromCity.value = v,
-                      decoration: const InputDecoration(
-                        labelText: "من (مدينة الانطلاق)",
-                        prefixIcon: Icon(Icons.location_on),
-                      ),
-                    ),
-                    TextField(
-                      onChanged: (v) => controller.toCity.value = v,
-                      decoration: const InputDecoration(
-                        labelText: "إلى (الوجهة)",
-                        prefixIcon: Icon(Icons.directions_bus),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: controller.searchTrips,
-                      child: const Text("ابحث الآن"),
-                    ),
-                  ],
-                ),
+          SearchHeader(controller: controller, primaryGreen: primaryGreen),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+
+                  FilterSection(
+                    controller: controller,
+                    primaryGreen: primaryGreen,
+                  ),
+
+                  DriverSearchField(
+                    controller: controller,
+                    primaryGreen: primaryGreen,
+                  ),
+
+                  _buildSectionTitle(),
+
+                  _buildResults(),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          ),
-
-          // عرض النتائج
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (controller.searchResults.isEmpty) {
-                return const Center(child: Text("لا توجد رحلات متاحة حالياً"));
-              }
-              return ListView.builder(
-                itemCount: controller.searchResults.length,
-                itemBuilder: (context, index) {
-                  var trip =
-                      controller.searchResults[index].data()
-                          as Map<String, dynamic>;
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 8,
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        "رحلة من ${trip['fromCity']} إلى ${trip['toCity']}",
-                      ),
-                      subtitle: Text(
-                        "السعر: ${trip['price']} ل.س | الموعد: ${trip['time']}",
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        // هنا ننتقل لصفحة تفاصيل الرحلة وحجز المقاعد
-                      },
-                    ),
-                  );
-                },
-              );
-            }),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildSectionTitle() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 20,
+            decoration: BoxDecoration(
+              color: primaryGreen,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            "الرحلات المتاحة لك",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResults() {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: Center(child: CircularProgressIndicator(color: primaryGreen)),
+        );
+      }
+
+      if (controller.filteredTrips.isEmpty) {
+        return Column(
+          children: [
+            const SizedBox(height: 50),
+            Icon(Icons.bus_alert_rounded, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 10),
+            Text(
+              "عذراً، لا توجد رحلات تطابق بحثك",
+              style: TextStyle(color: Colors.grey[500]),
+            ),
+          ],
+        );
+      }
+
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.filteredTrips.length,
+        itemBuilder: (context, index) {
+          var data =
+              controller.filteredTrips[index].data() as Map<String, dynamic>;
+          return TripTicket(trip: data, primaryGreen: primaryGreen);
+        },
+      );
+    });
   }
 }

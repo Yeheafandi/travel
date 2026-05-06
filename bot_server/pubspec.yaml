@@ -1,0 +1,14 @@
+name: bot_server
+description: Telegram bot server for Wojha
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  http: ^1.2.0
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+
+dev_dependencies:
+  lints: ^3.0.0

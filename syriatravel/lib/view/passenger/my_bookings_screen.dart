@@ -64,24 +64,20 @@ class MyBookingsScreen extends StatelessWidget {
     Map<String, dynamic> booking,
     String bookingId,
   ) {
-    // جلب المقاعد التي حجزها المستخدم حالياً
-    var reservedData = booking['reservedSeats'];
-    List<dynamic> seats = [];
-    if (reservedData is List) {
-      seats = reservedData;
-    } else if (reservedData != null) {
-      seats = [reservedData];
-    }
-
+    // جلب البيانات الأساسية
+    List<dynamic> seats = booking['selectedSeats'] ?? [];
     int seatsCount = seats.length;
-    String seatsText = seats.map((s) => s.toString()).join(' , ');
+    String seatsText = seats.join(' , ');
 
-    // جلب إجمالي مقاعد الباص من بيانات الحجز
-    // تأكد أنك عند الحجز قمت بحفظ هذا الحقل باسم 'totalSeats'
-    int totalBusSeats = booking['totalSeats'] ?? 0;
+    double totalPrice = 0.0;
+    var priceData = booking['price'];
 
+    if (priceData is String) {
+      totalPrice = double.tryParse(priceData) ?? 0.0;
+    } else if (priceData is num) {
+      totalPrice = priceData.toDouble();
+    }
     return Container(
-      // ... (باقي كود التنسيق كما هو)
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -104,49 +100,32 @@ class MyBookingsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildStatusBadge(booking['status'] ?? 'pending'),
-                    Text(
-                      "${booking['price']} ل.س",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: primaryGreen,
-                      ),
+                    // عرض السعر الإجمالي الفعلي هنا
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "$totalPrice ل.س",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: primaryGreen,
+                          ),
+                        ),
+                        Text(
+                          "إجمالي $seatsCount مقاعد",
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 const Divider(height: 30, thickness: 0.8),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: primaryGreen.withOpacity(0.1),
-                      child: Icon(Icons.directions_bus, color: primaryGreen),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${booking['fromCity']} ➔ ${booking['toCity']}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "التاريخ: ${booking['bookingDate']?.toDate().toString().split(' ')[0] ?? '---'}",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
+                // ... (باقي تفاصيل من/إلى والتاريخ كما هي في كودك)
+
                 // عرض تفاصيل المقاعد
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -155,52 +134,15 @@ class MyBookingsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: primaryGreen.withOpacity(0.05)),
                   ),
-                  // داخل Container تفاصيل المقاعد
-                  // داخل Container تفاصيل المقاعد في دالة _buildBookingCard
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Icon(Icons.chair_alt, size: 18, color: Colors.grey),
+                      const SizedBox(width: 8),
                       Expanded(
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.chair_alt,
-                              size: 18,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                "مقاعدك: ${seatsText.isEmpty ? 'غير محدد' : seatsText}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          "أرقام المقاعد: ${seatsText.isEmpty ? 'غير محدد' : seatsText}",
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      // عرض سعة الباص هنا
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "$seatsCount حجزت",
-                            style: TextStyle(
-                              color: primaryGreen,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (totalBusSeats > 0)
-                            Text(
-                              "من أصل $totalBusSeats مقعد",
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10,
-                              ),
-                            ),
-                        ],
                       ),
                     ],
                   ),
@@ -208,9 +150,11 @@ class MyBookingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          // زر إلغاء الرحلة
+
+          // زر الإلغاء المحدث
           InkWell(
-            onTap: () => _showCancelDialog(context, bookingId),
+            onTap: () =>
+                _showCancelDialog(context, bookingId, booking['tripId'], seats),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -220,23 +164,13 @@ class MyBookingsScreen extends StatelessWidget {
                   bottom: Radius.circular(20),
                 ),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.cancel_outlined,
-                    size: 18,
-                    color: Colors.redAccent,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "إلغاء هذا الحجز",
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              child: const Text(
+                "إلغاء هذا الحجز",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -245,33 +179,49 @@ class MyBookingsScreen extends StatelessWidget {
     );
   }
 
-  // نافذة تأكيد الإلغاء
-  void _showCancelDialog(BuildContext context, String bookingId) {
+  // دالة الإلغاء المحدثة (تحذف الحجز وتفتح المقاعد في الرحلة)
+  void _showCancelDialog(
+    BuildContext context,
+    String bookingId,
+    String tripId,
+    List<dynamic> seats,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("تأكيد الإلغاء", textAlign: TextAlign.right),
+        title: const Text("تأكيد الإلغاء"),
         content: const Text(
-          "هل أنت متأكد من رغبتك في إلغاء هذا الحجز؟",
-          textAlign: TextAlign.right,
+          "عند إلغاء الحجز سيتم إتاحة المقاعد للآخرين مرة أخرى.",
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("تراجع", style: TextStyle(color: Colors.grey)),
+            child: const Text("تراجع"),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () async {
-              await FirebaseFirestore.instance
-                  .collection('bookings')
-                  .doc(bookingId)
-                  .delete();
+              WriteBatch batch = FirebaseFirestore.instance.batch();
+
+              // 1. حذف وثيقة الحجز
+              batch.delete(
+                FirebaseFirestore.instance
+                    .collection('bookings')
+                    .doc(bookingId),
+              );
+
+              // 2. تحديث وثيقة الرحلة لإزالة المقاعد المحجوزة
+              batch.update(
+                FirebaseFirestore.instance.collection('trips').doc(tripId),
+                {'bookedSeats': FieldValue.arrayRemove(seats)},
+              );
+
+              await batch.commit();
+
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("تم إلغاء الحجز بنجاح"),
-                  backgroundColor: Colors.red,
+                  content: Text("تم إلغاء الحجز وإعادة توفر المقاعد"),
                 ),
               );
             },

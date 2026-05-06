@@ -13,7 +13,7 @@ class BotRequestsController extends GetxController {
   });
 
   bool isLoading = false;
-  bool isSaving = false;
+  String? savingBookingId;
   String? errorMessage;
   List<BotBookingModel> bookings = [];
 
@@ -39,7 +39,7 @@ class BotRequestsController extends GetxController {
   }
 
   Future<void> approveBooking(BotBookingModel booking) async {
-    isSaving = true;
+    savingBookingId = booking.externalId;
     update();
 
     try {
@@ -48,8 +48,12 @@ class BotRequestsController extends GetxController {
     } catch (e) {
       Get.snackbar('خطأ', e.toString());
     } finally {
-      isSaving = false;
+      savingBookingId = null;
       update();
     }
+  }
+
+  bool isBookingSaving(BotBookingModel booking) {
+    return savingBookingId == booking.externalId;
   }
 }

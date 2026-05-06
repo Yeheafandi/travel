@@ -1,25 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:syriatravel/bot/bot_booking_model.dart';
+
+import 'bot_booking_model.dart';
 
 class BotFirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<bool> requestExists(String externalId) async {
-    final query = await _firestore
-        .collection('bot_requests')
-        .where('externalId', isEqualTo: externalId)
-        .limit(1)
-        .get();
-
-    return query.docs.isNotEmpty;
-  }
-
   Future<void> saveRequest(BotBookingModel booking) async {
-    final exists = await requestExists(booking.externalId);
-    if (exists) return;
+    final docRef = _firestore
+        .collection('bot_requests')
+        .doc(booking.externalId);
 
-    await _firestore.collection('bot_requests').add({
+    final doc = await docRef.get();
+    if (doc.exists) return;
+
+    await docRef.set({
       ...booking.toFirestore(),
+      'syncStatus': booking.tripId.isEmpty ? 'needs_trip_match' : 'ready',
       'savedAt': FieldValue.serverTimestamp(),
     });
   }

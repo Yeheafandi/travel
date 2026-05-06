@@ -14,7 +14,9 @@ class BotRequestsPage extends StatelessWidget {
             title: const Text('طلبات البوت'),
             actions: [
               IconButton(
-                onPressed: controller.fetchBookings,
+                onPressed: controller.isLoading
+                    ? null
+                    : controller.fetchBookings,
                 icon: const Icon(Icons.refresh),
               ),
             ],
@@ -47,6 +49,7 @@ class BotRequestsPage extends StatelessWidget {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final booking = controller.bookings[index];
+                  final isSavingThis = controller.isBookingSaving(booking);
 
                   return Card(
                     child: Padding(
@@ -65,16 +68,20 @@ class BotRequestsPage extends StatelessWidget {
                           Text('الهاتف: ${booking.phone}'),
                           Text('من: ${booking.from}'),
                           Text('إلى: ${booking.to}'),
-                          Text('الرحلة: ${booking.tripId}'),
+                          Text(
+                            'الرحلة: ${booking.tripId.isEmpty ? 'غير محددة بعد' : booking.tripId}',
+                          ),
                           Text('الحالة: ${booking.status}'),
                           const SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: controller.isSaving
+                              onPressed: isSavingThis
                                   ? null
                                   : () => controller.approveBooking(booking),
-                              child: const Text('اعتماد وحفظ'),
+                              child: Text(
+                                isSavingThis ? 'جارٍ الحفظ...' : 'اعتماد وحفظ',
+                              ),
                             ),
                           ),
                         ],

@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:syriatravel/bot/bot_booking_model.dart';
+
+import 'bot_booking_model.dart';
 
 class BotApiService {
   final String baseUrl;
@@ -24,12 +25,6 @@ class BotApiService {
 
     if (decoded is List) {
       return decoded
-          .map((e) => BotBookingModel.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-    }
-
-    if (decoded is Map<String, dynamic> && decoded['data'] is List) {
-      return (decoded['data'] as List)
           .map((e) => BotBookingModel.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     }

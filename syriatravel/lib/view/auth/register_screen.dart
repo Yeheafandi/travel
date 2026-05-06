@@ -38,7 +38,6 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // أيقونة الواجهة مع تأثير ظل ناعم
             Center(
               child: Container(
                 padding: const EdgeInsets.all(25),
@@ -99,7 +98,6 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 35),
 
-                  // زر التأكيد بتصميم مرتفع (Elevation)
                   Obx(
                     () => authController.isLoading.value
                         ? const CircularProgressIndicator(

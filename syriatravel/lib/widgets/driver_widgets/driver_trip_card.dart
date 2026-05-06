@@ -35,7 +35,6 @@ class DriverTripCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // القسم العلوي: المسار والوقت
           Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -71,7 +70,6 @@ class DriverTripCard extends StatelessWidget {
             ),
           ),
 
-          // القسم السفلي: إحصائيات وأدوات
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             decoration: BoxDecoration(
@@ -83,7 +81,6 @@ class DriverTripCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // زر الحذف الأنيق
                 GestureDetector(
                   onTap: () => _confirmDelete(context),
                   child: Container(
@@ -100,7 +97,6 @@ class DriverTripCard extends StatelessWidget {
                   ),
                 ),
 
-                // تفاصيل الركاب والتاريخ
                 Row(
                   children: [
                     _buildStatChip(Icons.calendar_today_rounded, trip.date),
@@ -120,7 +116,6 @@ class DriverTripCard extends StatelessWidget {
     );
   }
 
-  // ودجت لعرض المدن بشكل جمالي
   Widget _buildLocationNode(String city, String label) {
     return Column(
       children: [
@@ -137,7 +132,6 @@ class DriverTripCard extends StatelessWidget {
     );
   }
 
-  // ودجت للبطاقات الصغيرة في الأسفل
   Widget _buildStatChip(IconData icon, String label, {bool isPrimary = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -165,7 +159,6 @@ class DriverTripCard extends StatelessWidget {
     );
   }
 
-  // (دالة الحذف تبقى كما هي مع تحديث الـ Shape الخاص بالـ Dialog ليصبح دائرياً أكثر)
   void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,

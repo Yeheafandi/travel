@@ -96,7 +96,6 @@ void showAddTripDialog(BuildContext context) {
                             (b) => b['busId'] == selectedBusId,
                           );
 
-                          // داخل ElevatedButton في نافذة إضافة رحلة
                           await controller.addTrip(
                             TripModel(
                               fromCity: fromC.text,
@@ -104,9 +103,7 @@ void showAddTripDialog(BuildContext context) {
                               date: dateC.text.trim(),
                               time: timeC.text.trim(),
                               price: priceC.text,
-                              driverName: controller
-                                  .driverName
-                                  .value,
+                              driverName: controller.driverName.value,
                               driverId: controller.currentUid,
                               busId: selectedBusId!,
                               totalSeats: bus['totalSeats'],

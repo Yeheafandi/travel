@@ -9,8 +9,8 @@ class TripModel {
   String price;
   String driverName;
   String driverId;
-  final String busId;      
-  final int totalSeats;   
+  final String busId;
+  final int totalSeats;
   List<int> bookedSeats;
 
   TripModel({
@@ -27,7 +27,6 @@ class TripModel {
     required this.bookedSeats,
   });
 
-  // تحويل البيانات القادمة من Firebase إلى كائن TripModel
   factory TripModel.fromMap(Map<String, dynamic> data, String id) {
     return TripModel(
       id: id,
@@ -38,13 +37,12 @@ class TripModel {
       price: data['price'] ?? '',
       driverName: data['driverName'] ?? '',
       driverId: data['driverId'] ?? '',
-      busId: data['busId'] ?? '', // أضفنا هذا السطر
-      totalSeats: data['totalSeats'] ?? 0, // أضفنا هذا السطر
+      busId: data['busId'] ?? '',
+      totalSeats: data['totalSeats'] ?? 0,
       bookedSeats: List<int>.from(data['bookedSeats'] ?? []),
     );
   }
 
-  // تحويل الكائن إلى Map لحفظه في Firebase
   Map<String, dynamic> toMap() {
     return {
       'fromCity': fromCity,
@@ -54,10 +52,10 @@ class TripModel {
       'price': price,
       'driverId': driverId,
       'driverName': driverName,
-      'busId': busId,         
-      'totalSeats': totalSeats, 
+      'busId': busId,
+      'totalSeats': totalSeats,
       'bookedSeats': bookedSeats,
-      'createdAt': FieldValue.serverTimestamp(), // أفضل من DateTime.now() للسيرفر
+      'createdAt': FieldValue.serverTimestamp(),
     };
   }
 }

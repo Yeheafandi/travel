@@ -18,64 +18,84 @@ class RoleSelectionScreen extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.card,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primary, width: 2),
-                ),
-                child: const Icon(
-                  Icons.directions_bus_rounded,
-                  size: 80,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 40),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 24,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.card,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.directions_bus_rounded,
+                            size: 80,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
 
-              const Text(
-                "وجهة",
-                style: TextStyle(
-                  color: AppColors.foreground,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+                        const Text(
+                          "وجهة",
+                          style: TextStyle(
+                            color: AppColors.foreground,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "احجز رحلتك بكل سهولة وأمان",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.mutedForeground,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 60),
+
+                        _buildRoleCard(
+                          title: "أنا سائق",
+                          subtitle: "أريد إضافة رحلات ونقل الركاب",
+                          icon: Icons.drive_eta_rounded,
+                          onTap: () =>
+                              Get.toNamed('/login', arguments: 'driver'),
+                          isPrimary: false,
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        _buildRoleCard(
+                          title: "أنا مسافر",
+                          subtitle: "أبحث عن رحلات لحجز مقعد",
+                          icon: Icons.person_pin_circle_rounded,
+                          onTap: () =>
+                              Get.toNamed('/login', arguments: 'passenger'),
+                          isPrimary: true,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                "احجز رحلتك بكل سهولة وأمان",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.mutedForeground,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 60),
-
-              _buildRoleCard(
-                title: "أنا سائق",
-                subtitle: "أريد إضافة رحلات ونقل الركاب",
-                icon: Icons.drive_eta_rounded,
-                onTap: () => Get.toNamed('/login', arguments: 'driver'),
-                isPrimary: false,
-              ),
-
-              const SizedBox(height: 20),
-
-              _buildRoleCard(
-                title: "أنا مسافر",
-                subtitle: "أبحث عن رحلات لحجز مقعد",
-                icon: Icons.person_pin_circle_rounded,
-                onTap: () => Get.toNamed('/login', arguments: 'passenger'),
-                isPrimary: true,
-              ),
-            ],
+            ),
           ),
         ),
       ),

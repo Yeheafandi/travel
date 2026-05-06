@@ -12,7 +12,6 @@ class BookingController extends GetxController {
   var searchResults = <TripModel>[].obs;
   var isSearching = false.obs;
 
-  // تحديث دالة البحث لتكون متوافقة مع التغييرات
   Future<void> searchTrips(String from, String to) async {
     try {
       isSearching.value = true;
@@ -46,6 +45,7 @@ class BookingController extends GetxController {
     required String passengerName,
     required String phone,
     required String idNumber,
+    required String transactionId,
     required List<int> seats,
   }) async {
     try {
@@ -54,7 +54,7 @@ class BookingController extends GetxController {
 
       if (currentUserId == null) {
         Get.snackbar("خطأ", "يجب تسجيل الدخول أولاً");
-        isLoading.value = false; // مهم جداً إيقافه هنا
+        isLoading.value = false;
         return;
       }
 
@@ -64,45 +64,41 @@ class BookingController extends GetxController {
 
         if (!tripSnapshot.exists) throw Exception("الرحلة غير موجودة");
 
-        // إنشاء سجل الحجز
         DocumentReference bookingRef = _firestore.collection('bookings').doc();
+
         transaction.set(bookingRef, {
           'tripId': trip.id,
           'userId': currentUserId,
           'passengerName': passengerName,
           'phoneNumber': phone,
           'identityNumber': idNumber,
+          'transactionId': transactionId,
           'selectedSeats': seats,
           'fromCity': trip.fromCity,
           'toCity': trip.toCity,
-          'price': trip.price * seats.length,
-          'status':
-              'confirmed', // اجعلها confirmed مباشرة إذا لم تكن تحتاج مراجعة
+          'price': (num.tryParse(trip.price) ?? 0) * seats.length,
+          'status': 'pending',
           'bookingDate': FieldValue.serverTimestamp(),
         });
 
-        // تحديث المقاعد في الرحلة
         transaction.update(tripRef, {
           'bookedSeats': FieldValue.arrayUnion(seats),
         });
       });
 
-      // إيقاف التحميل قبل إغلاق الواجهة
       isLoading.value = false;
 
       Get.snackbar(
         "نجاح",
-        "تم حجز المقاعد: ${seats.join(', ')}",
+        "تم حجز المقاعد: ${seats.join(', ')} برقم عملية: $transactionId",
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
 
-      // العودة من الديالوج
       Get.back();
-      // العودة من شاشة المقاعد إلى الرئيسية (اختياري)
       Future.delayed(const Duration(milliseconds: 500), () => Get.back());
     } catch (e) {
-      isLoading.value = false; // مهم جداً في حالة الخطأ
+      isLoading.value = false;
       Get.snackbar(
         "خطأ في الحجز",
         "فشلت العملية: $e",

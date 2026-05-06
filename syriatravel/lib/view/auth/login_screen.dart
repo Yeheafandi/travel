@@ -69,7 +69,7 @@ class LoginScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: TextButton(
                   onPressed: () {},
                   style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -186,7 +186,7 @@ class LoginScreen extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: AppColors.mutedForeground.withOpacity(0.5),
+              color: AppColors.mutedForeground,
             ),
             prefixIcon: Icon(icon, color: AppColors.primary, size: 22),
             filled: true,

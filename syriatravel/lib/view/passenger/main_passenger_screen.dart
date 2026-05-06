@@ -13,23 +13,19 @@ import '../../../controllers/navigation_controller.dart';
 import '../../../models/trip_model.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
-  PassengerHomeScreen({super.key,});
+  PassengerHomeScreen({super.key});
 
   final BookingController bookingController = Get.put(BookingController());
   final NavigationController navController = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
-
-
-
     const Color primaryGreen = Color(0xFF1B5E20);
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
       body: RefreshIndicator(
-        // تحسين الـ Refresh ليشمل إعادة جلب البيانات إذا لزم الأمر
         onRefresh: () async => await Future.delayed(const Duration(seconds: 1)),
         child: SingleChildScrollView(
           child: Column(
@@ -41,7 +37,7 @@ class PassengerHomeScreen extends StatelessWidget {
 
               Transform.translate(
                 offset: const Offset(0, -40),
-                child: const SearchCard(primaryColor: primaryGreen),
+                child: const SearchCard(),
               ),
 
               PassengerWidgets.buildSectionHeader(
@@ -93,7 +89,6 @@ class PassengerHomeScreen extends StatelessWidget {
 
             return TripListItem(
               trip: trip,
-              // التعديل هنا: ننتقل لشاشة المقاعد أولاً
               onTap: () {
                 Get.to(() => BusSeatScreen(trip: trip));
               },

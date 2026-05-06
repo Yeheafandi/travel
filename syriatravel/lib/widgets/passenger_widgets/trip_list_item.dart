@@ -32,9 +32,9 @@ class TripListItem extends StatelessWidget {
             ),
             const Spacer(),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${trip.fromCity} ➔ ${trip.toCity}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text("${trip.fromCity} ← ${trip.toCity}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 5),
                 Row(
                   children: [

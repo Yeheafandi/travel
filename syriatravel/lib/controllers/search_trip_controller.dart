@@ -10,9 +10,8 @@ class SearchTripController extends GetxController {
   var fromCity = "".obs;
   var toCity = "".obs;
 
-  // تحديث القيم الافتراضية للفلاتر
-  var selectedFilter = "الكل".obs; 
-  var driverQuery = "".obs; 
+  var selectedFilter = "الكل".obs;
+  var driverQuery = "".obs;
 
   void searchTrips() async {
     if (fromCity.value.trim().isEmpty || toCity.value.trim().isEmpty) {
@@ -40,7 +39,6 @@ class SearchTripController extends GetxController {
   List<QueryDocumentSnapshot> get filteredTrips {
     List<QueryDocumentSnapshot> list = [...searchResults];
 
-    // 1. الفلترة حسب اسم السائق
     if (driverQuery.value.isNotEmpty) {
       list = list.where((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -50,24 +48,20 @@ class SearchTripController extends GetxController {
       }).toList();
     }
 
-    // 2. الترتيب حسب السعر (الأرخص والأغلى)
     if (selectedFilter.value == "الأرخص") {
       list.sort((a, b) {
         var dataA = a.data() as Map<String, dynamic>;
         var dataB = b.data() as Map<String, dynamic>;
-        // تحويل السعر لرقم لضمان دقة المقارنة
         num priceA = num.tryParse(dataA['price']?.toString() ?? '0') ?? 0;
         num priceB = num.tryParse(dataB['price']?.toString() ?? '0') ?? 0;
         return priceA.compareTo(priceB);
       });
-    } 
-    else if (selectedFilter.value == "الأغلى") {
+    } else if (selectedFilter.value == "الأغلى") {
       list.sort((a, b) {
         var dataA = a.data() as Map<String, dynamic>;
         var dataB = b.data() as Map<String, dynamic>;
         num priceA = num.tryParse(dataA['price']?.toString() ?? '0') ?? 0;
         num priceB = num.tryParse(dataB['price']?.toString() ?? '0') ?? 0;
-        // الترتيب التنازلي للأغلى
         return priceB.compareTo(priceA);
       });
     }

@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syriatravel/controllers/driver_controller.dart';
 import 'package:syriatravel/models/user_model.dart';
-import 'package:syriatravel/core/services/storage_service.dart'; 
+import 'package:syriatravel/core/services/storage_service.dart';
 import 'package:syriatravel/routes/app_routes.dart';
 
 class AuthController extends GetxController {
@@ -11,7 +12,7 @@ class AuthController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   var isLoading = false.obs;
-  
+
   var name = ''.obs;
   var phone = ''.obs;
   var email = ''.obs;
@@ -25,12 +26,15 @@ class AuthController extends GetxController {
   Future<void> fetchUserData() async {
     try {
       String uid = _auth.currentUser!.uid;
-      DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .get();
       if (doc.exists) {
         name.value = doc['name'] ?? "";
         phone.value = doc['phone'] ?? "";
         email.value = doc['email'] ?? "";
-        
+
         await StorageService.saveUserName(name.value);
       }
     } catch (e) {
@@ -54,10 +58,13 @@ class AuthController extends GetxController {
         role: role,
       );
 
-      await _firestore.collection('users').doc(cred.user!.uid).set(newUser.toMap());
+      await _firestore
+          .collection('users')
+          .doc(cred.user!.uid)
+          .set(newUser.toMap());
 
       await StorageService.saveUserRole(role);
-      await StorageService.saveUserName(name.value); 
+      await StorageService.saveUserName(name.value);
 
       _routeUser(role);
     } catch (e) {
@@ -75,14 +82,17 @@ class AuthController extends GetxController {
         password: password.trim(),
       );
 
-      DocumentSnapshot doc = await _firestore.collection('users').doc(cred.user!.uid).get();
-      
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(cred.user!.uid)
+          .get();
+
       String role = doc['role'];
       String fetchedName = doc['name'] ?? "";
 
       await StorageService.saveUserRole(role);
       await StorageService.saveUserName(fetchedName);
-      
+
       name.value = fetchedName;
 
       _routeUser(role);
@@ -95,8 +105,12 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     try {
+      if (Get.isRegistered<DriverController>()) {
+        await Get.delete<DriverController>(force: true);
+      }
+
       await _auth.signOut();
-      await StorageService.clearAll(); 
+      await StorageService.clearAll();
       name.value = '';
       phone.value = '';
       email.value = '';

@@ -6,7 +6,7 @@ class InitialBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => AuthController(), fenix: true);
-    
+
     Get.lazyPut(() => NavigationController(), fenix: true);
   }
 }

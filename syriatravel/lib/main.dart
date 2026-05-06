@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/binding/initial_binding.dart';
@@ -7,8 +8,8 @@ import 'routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  await StorageService.init(); 
+
+  await StorageService.init();
   await Firebase.initializeApp();
 
   runApp(const MyApp());
@@ -23,15 +24,24 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'وجهة',
       locale: const Locale('ar', 'SY'),
-      
-      initialBinding: InitialBinding(), 
+      fallbackLocale: const Locale('ar', 'SY'),
+      supportedLocales: const [Locale('ar', 'SY')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
 
-      initialRoute: StorageService.hasRole() 
-          ? (StorageService.getUserRole() == 'driver' ? AppRoutes.driverHome : AppRoutes.mainWrapper)
+      initialBinding: InitialBinding(),
+
+      initialRoute: StorageService.hasRole()
+          ? (StorageService.getUserRole() == 'driver'
+                ? AppRoutes.driverHome
+                : AppRoutes.mainWrapper)
           : AppRoutes.roleSelection,
 
       getPages: AppRoutes.routes,
-      
+
       theme: ThemeData(
         primarySwatch: Colors.green,
         fontFamily: 'Cairo',

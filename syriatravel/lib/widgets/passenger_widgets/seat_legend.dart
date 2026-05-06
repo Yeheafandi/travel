@@ -26,7 +26,8 @@ class SeatLegend extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 14, height: 14,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
             color: fill,
             border: Border.all(color: border),

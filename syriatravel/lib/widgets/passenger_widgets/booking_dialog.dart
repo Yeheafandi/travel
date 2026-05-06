@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../models/trip_model.dart';
 import '../../../controllers/booking_controller.dart';
 
 class BookingDialog {
-  // أضفنا selectedSeats كبارامتر مطلوب هنا
   static void show(
     BuildContext context,
     TripModel trip,
@@ -14,6 +14,12 @@ class BookingDialog {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
     final TextEditingController idController = TextEditingController();
+    final TextEditingController transactionController = TextEditingController();
+
+    final String paymentReference = DateTime.now().millisecondsSinceEpoch
+        .toString()
+        .substring(7);
+    final String shamCashNumber = "09xxxxxxxx";
 
     showModalBottomSheet(
       context: context,
@@ -42,12 +48,12 @@ class BookingDialog {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                // عرض المقاعد المختارة للتأكيد
                 Text(
                   "المقاعد المختارة: ${selectedSeats.join(', ')}",
                   style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
                 const SizedBox(height: 20),
+
                 _buildTextField(nameController, "الاسم الكامل", Icons.person),
                 const SizedBox(height: 15),
                 _buildTextField(
@@ -63,20 +69,117 @@ class BookingDialog {
                   Icons.badge,
                   keyboard: TextInputType.number,
                 ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Divider(),
+                ),
+                const Text(
+                  "تعليمات الدفع (شام كاش)",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1B5E20),
+                  ),
+                ),
+                const SizedBox(height: 15),
+
+                // عرض رقم الحساب مع زر نسخ
+                _buildCopyableField(
+                  context,
+                  "رقم حساب التحويل",
+                  shamCashNumber,
+                ),
+                const SizedBox(height: 10),
+
+                _buildCopyableField(
+                  context,
+                  "رمز الدفع (يوضع في الملاحظات)",
+                  paymentReference,
+                  isHighlight: true,
+                ),
+
+                const SizedBox(height: 20),
+
+                _buildTextField(
+                  transactionController,
+                  "أدخل رقم العملية بعد التحويل",
+                  Icons.receipt_long,
+                  keyboard: TextInputType.number,
+                ),
+
                 const SizedBox(height: 25),
+
+                // 3. أزرار العمليات
                 _buildActionButtons(
                   trip,
                   nameController,
                   phoneController,
                   idController,
+                  transactionController,
                   bookingController,
-                  selectedSeats, // تمرير المقاعد للدالة
+                  selectedSeats,
                 ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  static Widget _buildCopyableField(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        const SizedBox(height: 5),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: isHighlight ? const Color(0xFFE8F5E9) : Colors.grey[100],
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isHighlight ? const Color(0xFF1B5E20) : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isHighlight ? const Color(0xFF1B5E20) : Colors.black87,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.copy,
+                  size: 20,
+                  color: Color(0xFF1B5E20),
+                ),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: value));
+                  Get.snackbar(
+                    "تم النسخ",
+                    "تم نسخ $label إلى الحافظة",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: const Color(0xFF1B5E20),
+                    colorText: Colors.white,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -118,13 +221,13 @@ class BookingDialog {
     TextEditingController name,
     TextEditingController phone,
     TextEditingController id,
+    TextEditingController transaction,
     BookingController controller,
     List<int> selectedSeats,
   ) {
     return Row(
       children: [
         Expanded(
-          // استخدام Obx هنا لمراقبة حالة التحميل
           child: Obx(() {
             return controller.isLoading.value
                 ? const Center(
@@ -134,10 +237,11 @@ class BookingDialog {
                     onPressed: () async {
                       if (name.text.isEmpty ||
                           phone.text.isEmpty ||
-                          id.text.isEmpty) {
+                          id.text.isEmpty ||
+                          transaction.text.isEmpty) {
                         Get.snackbar(
                           "تنبيه",
-                          "يرجى إكمال كافة البيانات",
+                          "يرجى إكمال البيانات وإدخال رقم عملية الدفع",
                           backgroundColor: Colors.redAccent,
                           colorText: Colors.white,
                           snackPosition: SnackPosition.BOTTOM,
@@ -145,13 +249,13 @@ class BookingDialog {
                         return;
                       }
 
-                      // استدعاء دالة الحجز
                       await controller.bookTrip(
                         trip: trip,
                         passengerName: name.text,
                         phone: phone.text,
                         idNumber: id.text,
                         seats: selectedSeats,
+                        transactionId: transaction.text,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -162,7 +266,7 @@ class BookingDialog {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text("تأكيد الحجز"),
+                    child: const Text("تأكيد الدفع والحجز"),
                   );
           }),
         ),

@@ -15,20 +15,26 @@ class PassengerWidgets {
         border: Border.all(color: Colors.grey.withOpacity(0.2)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(width: 15),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              Text(
+                label,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
               Text(
                 value,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),
-          const SizedBox(width: 15),
-          Icon(icon, color: iconColor, size: 22),
         ],
       ),
     );
@@ -47,24 +53,30 @@ class PassengerWidgets {
         border: Border.all(color: Colors.grey.withOpacity(0.1)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Icon(icon, color: Colors.grey, size: 18),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                Text(
+                  label,
+                  style: const TextStyle(color: Colors.grey, fontSize: 11),
+                ),
                 Text(
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          Icon(icon, color: Colors.grey, size: 18),
         ],
       ),
     );
@@ -145,6 +157,7 @@ class PassengerWidgets {
       ),
     );
   }
+
   static Widget buildNoTripsFound() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
@@ -177,11 +190,7 @@ class PassengerWidgets {
           const Text(
             "جرب البحث عن مدينة أخرى أو عد لاحقاً\nلمشاهدة التحديثات الجديدة",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
           ),
         ],
       ),

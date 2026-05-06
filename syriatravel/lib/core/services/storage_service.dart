@@ -8,13 +8,11 @@ class StorageService extends GetxService {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  
   static Future<void> saveUserRole(String role) async =>
       await _prefs.setString('user_role', role);
 
   static Future<void> saveUserName(String name) async =>
       await _prefs.setString('user_name', name);
-
 
   static String getUserRole() => _prefs.getString('user_role') ?? "";
 
@@ -22,6 +20,5 @@ class StorageService extends GetxService {
 
   static bool hasRole() => getUserRole().isNotEmpty;
 
-  
   static Future<void> clearAll() async => await _prefs.clear();
 }

@@ -19,7 +19,12 @@ class ActionPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25, 20, 25, 35),
+      padding: EdgeInsets.fromLTRB(
+        25,
+        20,
+        25,
+        MediaQuery.of(context).padding.bottom + 20,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
@@ -30,9 +35,18 @@ class ActionPanel extends StatelessWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildInfoRow("المقاعد المختارة:", hasSelection ? controller.selectedSeats.join(", ") : "لم يتم الاختيار"),
+            _buildInfoRow(
+              "المقاعد المختارة:",
+              hasSelection
+                  ? controller.selectedSeats.join(", ")
+                  : "لم يتم الاختيار",
+            ),
             const SizedBox(height: 10),
-            _buildInfoRow("إجمالي المبلغ:", "${controller.totalPrice} ل.س", isBold: true),
+            _buildInfoRow(
+              "إجمالي المبلغ:",
+              "${controller.totalPrice} ل.س",
+              isBold: true,
+            ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -41,7 +55,9 @@ class ActionPanel extends StatelessWidget {
                     onPressed: () => Get.back(),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: const Text("رجوع"),
                   ),
@@ -54,9 +70,14 @@ class ActionPanel extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryGreen,
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
-                    child: const Text("تأكيد الحجز الآن", style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      "تأكيد الحجز الآن",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],

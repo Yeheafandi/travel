@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/controllers/driver_controller.dart';
+import 'package:syriatravel/view/driver/driver_profile_screen.dart';
 import 'package:syriatravel/widgets/driver_widgets/add_bus_dialog.dart'
     show showAddBusDialog;
 import 'package:syriatravel/widgets/driver_widgets/add_trip_dialog.dart';
@@ -62,15 +63,18 @@ class DriverHomeScreen extends StatelessWidget {
     );
   }
 
-  // --- مكونات الواجهة ---
-
   Widget _buildDriverHeader(
     Color color,
     DriverController controller,
     BuildContext context,
   ) {
     return Container(
-      padding: const EdgeInsets.only(top: 60, left: 25, right: 25, bottom: 60),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 25,
+        right: 25,
+        bottom: 60,
+      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: const BorderRadius.only(
@@ -81,22 +85,35 @@ class DriverHomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              const Text(
-                "أهلاً بك،",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
-              Obx(
-                () => Text(
-                  controller.driverName.value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+              GestureDetector(
+                onTap: () => Get.to(() => const DriverProfileScreen()),
+                child: const CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Colors.white24,
+                  child: Icon(Icons.person, color: Colors.white, size: 30),
                 ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "أهلاً بك،",
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                  Obx(
+                    () => Text(
+                      controller.driverName.value,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

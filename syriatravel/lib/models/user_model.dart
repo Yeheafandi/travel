@@ -7,10 +7,10 @@ class UserModel {
 
   UserModel({
     required this.uid,
-    required this.email, 
-    required this.name, 
-    required this.phone, 
-    required this.role
+    required this.email,
+    required this.name,
+    required this.phone,
+    required this.role,
   });
 
   Map<String, dynamic> toMap() {

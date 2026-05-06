@@ -48,7 +48,10 @@ class TripTicket extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Divider(color: primaryGreen.withOpacity(0.2), thickness: 2),
           ),
-          Text(trip['time'] ?? "--:--", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(
+            trip['time'] ?? "--:--",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
         ],
       ),
     );
@@ -64,11 +67,23 @@ class TripTicket extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(trip['driverName'] ?? "غير محدد", style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            trip['driverName'] ?? "غير محدد",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-            decoration: BoxDecoration(color: primaryGreen, borderRadius: BorderRadius.circular(12)),
-            child: Text("${trip['price']} ل.س", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            decoration: BoxDecoration(
+              color: primaryGreen,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              "${trip['price']} ل.س",
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -78,7 +93,14 @@ class TripTicket extends StatelessWidget {
   Widget _buildRouteNode(String city, String label) {
     return Column(
       children: [
-        Text(city, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: primaryGreen)),
+        Text(
+          city,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: primaryGreen,
+          ),
+        ),
         Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
       ],
     );

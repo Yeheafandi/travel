@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // أضفنا مكتبة auth
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/models/trip_model.dart';
@@ -11,22 +13,21 @@ class DriverController extends GetxController {
   var myTrips = <TripModel>[].obs;
   var driverName = "".obs;
 
-  // 1. قائمة لحفظ باصات السائق
   var myBuses = <Map<String, dynamic>>[].obs;
+
+  StreamSubscription<QuerySnapshot>? _tripsSubscription;
 
   @override
   void onInit() {
     super.onInit();
-    // جلب البيانات تلقائياً بمجرد تشغيل المتحكم
     String? uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       getDriverProfile(uid);
-      fetchMyBuses(uid); // جلب الباصات
-      fetchMyTrips(uid); // جلب الرحلات
+      fetchMyBuses(uid);
+      fetchMyTrips(uid);
     }
   }
 
-  // 2. دالة لجلب باصات السائق من Firestore
   Future<void> fetchMyBuses(String uid) async {
     try {
       var doc = await _firestore.collection('drivers').doc(uid).get();
@@ -39,63 +40,124 @@ class DriverController extends GetxController {
   }
 
   Future<void> addTrip(TripModel trip) async {
-  try {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    // 1. فحص تضارب المواعيد: هل الباص محجوز في نفس التاريخ والوقت؟
-    final existingTrips = await _firestore
-        .collection('trips')
-        .where('busId', isEqualTo: trip.busId)
-        .where('date', isEqualTo: trip.date)
-        .where('time', isEqualTo: trip.time)
-        .get();
+      final existingTrips = await _firestore
+          .collection('trips')
+          .where('busId', isEqualTo: trip.busId)
+          .where('date', isEqualTo: trip.date)
+          .where('time', isEqualTo: trip.time)
+          .get();
 
-    if (existingTrips.docs.isNotEmpty) {
-      Get.snackbar(
-        "تنبيه", 
-        "هذا الباص لديه رحلة أخرى في نفس هذا الوقت والتاريخ!",
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
-      return; // توقف عن الإضافة
+      if (existingTrips.docs.isNotEmpty) {
+        Get.snackbar(
+          "تنبيه",
+          "هذا الباص لديه رحلة أخرى في نفس هذا الوقت والتاريخ!",
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      await _firestore.collection('trips').add(trip.toMap());
+      Get.snackbar("نجاح", "تمت إضافة الرحلة بنجاح");
+    } catch (e) {
+      Get.snackbar("خطأ", "فشل إضافة الرحلة: $e");
+    } finally {
+      isLoading.value = false;
     }
-
-    // 2. إذا لم يوجد تضارب، نقوم بالإضافة
-    await _firestore.collection('trips').add(trip.toMap());
-    Get.snackbar("نجاح", "تمت إضافة الرحلة بنجاح");
-    
-  } catch (e) {
-    Get.snackbar("خطأ", "فشل إضافة الرحلة: $e");
-  } finally {
-    isLoading.value = false;
   }
-}
 
   void fetchMyTrips(String driverId) {
-    _firestore
+    _tripsSubscription?.cancel();
+    _tripsSubscription = _firestore
         .collection('trips')
         .where('driverId', isEqualTo: driverId)
         .snapshots()
-        .listen((snapshot) {
-          myTrips.value = snapshot.docs
-              .map((doc) => TripModel.fromMap(doc.data(), doc.id))
-              .toList();
-        });
+        .listen(
+          (snapshot) {
+            myTrips.value = snapshot.docs
+                .map((doc) => TripModel.fromMap(doc.data(), doc.id))
+                .toList();
+          },
+          onError: (e) {
+            myTrips.clear();
+          },
+        );
+  }
+
+  @override
+  void onClose() {
+    _tripsSubscription?.cancel();
+    _tripsSubscription = null;
+    super.onClose();
   }
 
   Future<void> deleteTrip(String tripId) async {
     try {
-      await _firestore.collection('trips').doc(tripId).delete();
-      _showSnackbar("تم الحذف", "تم إلغاء الرحلة بنجاح", Colors.orange);
+      isLoading.value = true;
+
+      final tripSnapshot = await _firestore
+          .collection('trips')
+          .doc(tripId)
+          .get();
+      if (!tripSnapshot.exists) {
+        _showSnackbar("خطأ", "الرحلة غير موجودة", Colors.red);
+        return;
+      }
+      final tripData = tripSnapshot.data() as Map<String, dynamic>;
+      final fromCity = tripData['fromCity'] ?? '';
+      final toCity = tripData['toCity'] ?? '';
+      final date = tripData['date'] ?? '';
+
+      final bookingsSnapshot = await _firestore
+          .collection('bookings')
+          .where('tripId', isEqualTo: tripId)
+          .get();
+
+      final batch = _firestore.batch();
+
+      for (final doc in bookingsSnapshot.docs) {
+        final bookingData = doc.data();
+        final passengerUserId = bookingData['userId'];
+
+        final notifRef = _firestore.collection('notifications').doc();
+        batch.set(notifRef, {
+          'userId': passengerUserId,
+          'title': 'تم إلغاء الرحلة',
+          'body':
+              'تم إلغاء رحلتك من $fromCity إلى $toCity بتاريخ $date من قبل السائق.',
+          'tripId': tripId,
+          'type': 'trip_cancelled',
+          'read': false,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        batch.delete(doc.reference);
+      }
+
+      batch.delete(_firestore.collection('trips').doc(tripId));
+
+      await batch.commit();
+
+      final affected = bookingsSnapshot.docs.length;
+      _showSnackbar(
+        "تم الحذف",
+        affected == 0
+            ? "تم إلغاء الرحلة بنجاح"
+            : "تم إلغاء الرحلة وإشعار $affected من المسافرين",
+        Colors.orange,
+      );
     } catch (e) {
       _showSnackbar("خطأ", "لم يتم الحذف: $e", Colors.red);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  // 3. تعديل جلب الاسم ليكون من مجموعة 'drivers' إذا كان الحساب خاصاً بسائق
   Future<void> getDriverProfile(String uid) async {
     try {
-      // جرب البحث في مجموعة 'users' أولاً، ثم 'drivers'
       var doc = await _firestore.collection('users').doc(uid).get();
       if (!doc.exists) {
         doc = await _firestore.collection('drivers').doc(uid).get();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/view/dashboard/admin_dashboard.dart';
+import 'package:syriatravel/view/dashboard/bus_company_dashboard.dart';
 
 import '../../controllers/auth_controller.dart';
 
@@ -90,7 +90,7 @@ class ProfileScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AdminDashboard()),
+            MaterialPageRoute(builder: (context) => BusCompanyDashboard()),
           );
         },
         child: Icon(Icons.dashboard),

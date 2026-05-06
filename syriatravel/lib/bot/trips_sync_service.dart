@@ -12,19 +12,19 @@ class TripsSyncService {
   TripsSyncService({required this.botUrl});
 
   Future<List<TripModel>> getAvailableTrips() async {
-    final snapshot = await _firestore
-        .collection('trips')
-        .where('status', isEqualTo: 'متاحة')
-        .get();
+    // جلب كل الرحلات حاليًا للاختبار
+    final snapshot = await _firestore.collection('trips').get();
 
     return snapshot.docs
         .map((doc) => TripModel.fromFirestore(doc.data()))
+        .where((trip) => trip.availableSeats > 0) // فقط المتاحة
         .toList();
   }
 
   Future<bool> syncTripsWithBot() async {
     try {
       final trips = await getAvailableTrips();
+      print('Found ${trips.length} available trips');
 
       final cleanBotUrl = botUrl.endsWith('/')
           ? botUrl.substring(0, botUrl.length - 1)
@@ -37,16 +37,18 @@ class TripsSyncService {
         body: jsonEncode(trips.map((t) => t.toJson()).toList()),
       );
 
+      print('Bot response: ${response.statusCode} ${response.body}');
+
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        print('Synced ${result['count']} trips to bot');
+        print('✅ Synced ${result['count']} trips to bot');
         return true;
       }
 
-      print('Sync failed: ${response.statusCode}');
+      print('❌ Sync failed: ${response.statusCode} ${response.body}');
       return false;
     } catch (e) {
-      print('Sync error: $e');
+      print('❌ Sync error: $e');
       return false;
     }
   }

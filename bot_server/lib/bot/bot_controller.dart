@@ -226,7 +226,6 @@ class BotController {
   }
 
   void updateTrips(List<Map<String, dynamic>> trips) {
-    // تحويل إلى List<Map<String, String>> للتوافق مع availableTrips
     availableTrips.clear();
     for (final trip in trips) {
       availableTrips.add({
@@ -238,7 +237,7 @@ class BotController {
         'seats': trip['seats']?.toString() ?? '0',
       });
     }
-    print('Updated ${availableTrips.length} trips from app');
+    print('✅ Updated ${availableTrips.length} trips from app');
   }
 
   Future<void> handleUpdate(Map<String, dynamic> update) async {

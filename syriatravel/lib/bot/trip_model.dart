@@ -1,39 +1,45 @@
 class TripModel {
   final String id;
-  final String departure;
-  final String destination;
+  final String fromCity;
+  final String toCity;
   final String time;
   final String status;
-  final String seats;
+  final int totalSeats;
+  final int availableSeats;
 
   const TripModel({
     required this.id,
-    required this.departure,
-    required this.destination,
+    required this.fromCity,
+    required this.toCity,
     required this.time,
     required this.status,
-    required this.seats,
+    required this.totalSeats,
+    required this.availableSeats,
   });
 
   factory TripModel.fromFirestore(Map<String, dynamic> json) {
+    final bookedSeats = (json['bookedSeats'] as List?)?.length ?? 0;
+    final totalSeats = (json['totalSeats'] as num?)?.toInt() ?? 0;
+
     return TripModel(
-      id: (json['id'] ?? '').toString(),
-      departure: (json['departure'] ?? '').toString(),
-      destination: (json['destination'] ?? '').toString(),
+      id: (json['id'] ?? json['busId'] ?? '').toString(),
+      fromCity: (json['fromCity'] ?? '').toString(),
+      toCity: (json['toCity'] ?? '').toString(),
       time: (json['time'] ?? '').toString(),
-      status: (json['status'] ?? 'متاحة').toString(),
-      seats: (json['seats'] ?? '0').toString(),
+      status: (json['tripStatus'] ?? 'متاحة').toString(),
+      totalSeats: totalSeats,
+      availableSeats: totalSeats - bookedSeats,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'departure': departure,
-      'destination': destination,
+      'departure': fromCity,
+      'destination': toCity,
       'time': time,
       'status': status,
-      'seats': seats,
+      'seats': availableSeats.toString(),
     };
   }
 }

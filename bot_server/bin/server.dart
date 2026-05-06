@@ -23,6 +23,13 @@ void main() async {
     return Response.ok('Bot server is running');
   });
 
+  router.get('/bookings', (Request request) {
+    return Response.ok(
+      jsonEncode(botController.getBookings()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
+
   router.post('/webhook', (Request request) async {
     try {
       final body = await request.readAsString();

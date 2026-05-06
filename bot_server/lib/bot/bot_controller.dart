@@ -176,6 +176,55 @@ class BotController {
     );
   }
 
+  Map<String, String>? findTripByDetails({
+    required String departure,
+    required String destination,
+    required String time,
+  }) {
+    try {
+      return availableTrips.firstWhere(
+        (trip) =>
+            trip['departure'] == departure &&
+            trip['destination'] == destination &&
+            trip['time'] == time,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  List<Map<String, dynamic>> getBookings() {
+    final List<Map<String, dynamic>> allBookings = [];
+
+    confirmedBookings.forEach((chatId, bookings) {
+      for (final booking in bookings) {
+        final trip = findTripByDetails(
+          departure: booking['departure'] ?? '',
+          destination: booking['destination'] ?? '',
+          time: booking['time'] ?? '',
+        );
+
+        allBookings.add({
+          'id': booking['bookingId'] ?? '',
+          'external_id': booking['bookingId'] ?? '',
+          'booking_id': booking['bookingId'] ?? '',
+          'chat_id': chatId,
+          'passenger_name': booking['name'] ?? '',
+          'phone': booking['phone'] ?? '',
+          'national_id': booking['nationalId'] ?? '',
+          'from': booking['departure'] ?? '',
+          'to': booking['destination'] ?? '',
+          'time': booking['time'] ?? '',
+          'trip_id': trip?['id'] ?? '',
+          'status': booking['status'] ?? 'مؤكد',
+          'source': 'telegram_bot',
+        });
+      }
+    });
+
+    return allBookings;
+  }
+
   Future<void> handleUpdate(Map<String, dynamic> update) async {
     try {
       print(

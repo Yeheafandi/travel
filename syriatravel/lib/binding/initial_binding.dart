@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:syriatravel/bot/trips_sync_service.dart';
 
 import '../bot/bot_api_service.dart';
 import '../bot/bot_firestore_service.dart';
@@ -29,6 +30,13 @@ class InitialBinding extends Bindings {
       () => BotRequestsController(
         apiService: Get.find<BotApiService>(),
         firestoreService: Get.find<BotFirestoreService>(),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<TripsSyncService>(
+      () => TripsSyncService(
+        botUrl: 'https://talented-reprieve-production-8f46.up.railway.app',
       ),
       fenix: true,
     );

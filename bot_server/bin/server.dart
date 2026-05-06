@@ -23,6 +23,13 @@ void main() async {
     return Response.ok('Bot server is running');
   });
 
+  router.get('/bookings', (Request request) {
+    return Response.ok(
+      jsonEncode(botController.getBookings()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
+
   router.post('/webhook', (Request request) async {
     try {
       final body = await request.readAsString();
@@ -34,6 +41,26 @@ void main() async {
     } catch (e) {
       print('Webhook error: $e');
       return Response.internalServerError(body: 'Error: $e');
+    }
+  });
+
+  router.post('/sync-trips', (Request request) async {
+    try {
+      final body = await request.readAsString();
+      final tripsData = jsonDecode(body) as List<dynamic>;
+
+      // تحويل إلى List<Map<String, String>> للتوافق مع availableTrips
+      botController.updateTrips(tripsData.cast<Map<String, dynamic>>());
+
+      return Response.ok(
+        jsonEncode({'success': true, 'count': tripsData.length}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      print('Sync trips error: $e');
+      return Response.internalServerError(
+        body: jsonEncode({'success': false, 'error': e.toString()}),
+      );
     }
   });
 

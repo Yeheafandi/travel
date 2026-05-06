@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/view/dashboard/bus_company_dashboard.dart';
+import 'package:syriatravel/bot/trips_sync_page.dart';
 
 import '../../controllers/auth_controller.dart';
 
@@ -88,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BusCompanyDashboard()),
+            MaterialPageRoute(builder: (context) => TripsSyncPage()),
           );
         },
         child: Icon(Icons.dashboard),

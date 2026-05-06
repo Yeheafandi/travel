@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,5 +52,14 @@ class TripsSyncService {
       print('❌ Sync error: $e');
       return false;
     }
+  }
+
+  void autoSync() {
+    syncTripsWithBot(); // أول مرة عند التشغيل
+
+    // كل ساعة
+    Timer.periodic(const Duration(hours: 1), (timer) {
+      syncTripsWithBot();
+    });
   }
 }

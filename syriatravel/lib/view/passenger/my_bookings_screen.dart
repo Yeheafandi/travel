@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:syriatravel/bot/bot_widget.dart';
 
 class MyBookingsScreen extends StatelessWidget {
   const MyBookingsScreen({super.key});
@@ -40,19 +41,73 @@ class MyBookingsScreen extends StatelessWidget {
                   return Center(child: Text("حدث خطأ ما: ${snapshot.error}"));
                 }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return _buildNoBookingsFound();
-                }
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+                        _buildNoBookingsFound()
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var doc = snapshot.data!.docs[index];
+                            var booking = doc.data() as Map<String, dynamic>;
+                            String bookingId = doc.id;
+                            return _buildBookingCard(
+                              context,
+                              booking,
+                              bookingId,
+                            );
+                          },
+                        ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            // الخط الأيمن
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: Colors
+                                    .black26, // لون أسود خفيف جداً أو رمادي
+                              ),
+                            ),
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    var doc = snapshot.data!.docs[index];
-                    var booking = doc.data() as Map<String, dynamic>;
-                    String bookingId = doc.id; // نحتاج الـ ID للإلغاء
-                    return _buildBookingCard(context, booking, bookingId);
-                  },
+                            // النص مع مسافة بسيطة من الطرفين
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ), // المسافة بين النص والخطوط
+                              child: Text(
+                                'حجوزات البوت',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors
+                                      .black54, // لون النص بوضوح أخف من الأسود الكامل
+                                ),
+                              ),
+                            ),
+
+                            // الخط الأيسر
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: Colors.black26, // لون مطابق للخط الأول
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const BotWidget(),
+                    ],
+                  ),
                 );
               },
             ),

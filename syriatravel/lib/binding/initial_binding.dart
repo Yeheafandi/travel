@@ -34,11 +34,12 @@ class InitialBinding extends Bindings {
       fenix: true,
     );
 
-    Get.lazyPut<TripsSyncService>(
-      () => TripsSyncService(
+    Get.lazyPut<TripsSyncService>(() {
+      final service = TripsSyncService(
         botUrl: 'https://talented-reprieve-production-8f46.up.railway.app',
-      ),
-      fenix: true,
-    );
+      );
+      service.autoSync(); // تلقائي عند التشغيل
+      return service;
+    }, fenix: true);
   }
 }

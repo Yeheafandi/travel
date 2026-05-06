@@ -13,16 +13,13 @@ import '../../../controllers/navigation_controller.dart';
 import '../../../models/trip_model.dart';
 
 class PassengerHomeScreen extends StatelessWidget {
-  PassengerHomeScreen({super.key,});
+  PassengerHomeScreen({super.key});
 
   final BookingController bookingController = Get.put(BookingController());
   final NavigationController navController = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
-
-
-
     const Color primaryGreen = Color(0xFF1B5E20);
     final user = FirebaseAuth.instance.currentUser;
 

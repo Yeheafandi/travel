@@ -44,6 +44,26 @@ void main() async {
     }
   });
 
+  router.post('/sync-trips', (Request request) async {
+    try {
+      final body = await request.readAsString();
+      final tripsData = jsonDecode(body) as List<dynamic>;
+
+      // تحويل إلى List<Map<String, String>> للتوافق مع availableTrips
+      botController.updateTrips(tripsData.cast<Map<String, dynamic>>());
+
+      return Response.ok(
+        jsonEncode({'success': true, 'count': tripsData.length}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      print('Sync trips error: $e');
+      return Response.internalServerError(
+        body: jsonEncode({'success': false, 'error': e.toString()}),
+      );
+    }
+  });
+
   final handler = Pipeline().addMiddleware(logRequests()).addHandler(router);
 
   final port = int.parse(Platform.environment['PORT'] ?? '8080');

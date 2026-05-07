@@ -92,15 +92,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   ),
                 ],
               ),
-              GestureDetector(
-                onTap: () => _showLogoutConfirmation(),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.logout, color: Colors.white),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_outlined,
+                  color: Colors.white,
+                  textDirection: TextDirection.ltr,
                 ),
               ),
             ],

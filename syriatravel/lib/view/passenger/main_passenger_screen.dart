@@ -25,9 +25,10 @@ class PassengerHomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
-      body: RefreshIndicator(
-        onRefresh: () async => await Future.delayed(const Duration(seconds: 1)),
-        child: SafeArea(
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async =>
+              await Future.delayed(const Duration(seconds: 1)),
           child: SingleChildScrollView(
             child: Column(
               children: [

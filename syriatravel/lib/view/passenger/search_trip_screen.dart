@@ -7,6 +7,7 @@ import 'package:syriatravel/widgets/passenger_widgets/driver_search_field.dart';
 import 'package:syriatravel/widgets/passenger_widgets/filter_section.dart';
 import 'package:syriatravel/widgets/passenger_widgets/search_header.dart';
 import 'package:syriatravel/widgets/passenger_widgets/trip_ticket.dart';
+
 import '../../controllers/search_trip_controller.dart';
 
 class SearchTripScreen extends StatelessWidget {
@@ -30,25 +31,27 @@ class SearchTripScreen extends StatelessWidget {
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          SearchHeader(controller: controller),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SearchHeader(controller: controller),
 
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 15),
-                  FilterSection(controller: controller),
-                  DriverSearchField(controller: controller),
-                  _buildSectionTitle(),
-                  _buildResults(),
-                  const SizedBox(height: 20),
-                ],
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 15),
+                    FilterSection(controller: controller),
+                    DriverSearchField(controller: controller),
+                    _buildSectionTitle(),
+                    _buildResults(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

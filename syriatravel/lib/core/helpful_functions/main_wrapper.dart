@@ -31,7 +31,7 @@ class MainWrapper extends StatelessWidget {
           children: screens,
         ),
       ),
-      bottomNavigationBar: Obx(() => _buildBottomNav()),
+      bottomNavigationBar: SafeArea(child: Obx(() => _buildBottomNav())),
     );
   }
 

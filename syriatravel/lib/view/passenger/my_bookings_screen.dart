@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:syriatravel/widgets/passenger_widgets/booking_widgets/booking_card.dart';
-import 'package:syriatravel/bot/bot_widget.dart';
 
 class MyBookingsScreen extends StatelessWidget {
   const MyBookingsScreen({super.key});
@@ -59,42 +58,42 @@ class MyBookingsScreen extends StatelessWidget {
                             );
                           },
                         ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Colors.black26,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Text(
-                                'حجوزات البوت',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Colors.black26,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const BotWidget(),
+                      // Container(
+                      //   margin: const EdgeInsets.symmetric(
+                      //     horizontal: 10,
+                      //     vertical: 10,
+                      //   ),
+                      //   child: Row(
+                      //     children: [
+                      //       Expanded(
+                      //         child: Container(
+                      //           height: 1,
+                      //           color: Colors.black26,
+                      //         ),
+                      //       ),
+                      //       Padding(
+                      //         padding: const EdgeInsets.symmetric(
+                      //           horizontal: 12,
+                      //         ),
+                      //         child: Text(
+                      //           'حجوزات البوت',
+                      //           style: TextStyle(
+                      //             fontSize: 16,
+                      //             fontWeight: FontWeight.bold,
+                      //             color: Colors.black54,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       Expanded(
+                      //         child: Container(
+                      //           height: 1,
+                      //           color: Colors.black26,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const BotWidget(),
                     ],
                   ),
                 );

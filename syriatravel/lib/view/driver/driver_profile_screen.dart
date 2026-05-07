@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/core/constants/app_colors.dart';
 import 'package:syriatravel/view/dashboard/bus_company_dashboard.dart';
+<<<<<<< HEAD
+=======
+
+>>>>>>> c7318527461e9b3313af5eaf757aba8380633e1f
 import '../../controllers/auth_controller.dart';
 
 class DriverProfileScreen extends StatelessWidget {
@@ -62,7 +66,37 @@ class DriverProfileScreen extends StatelessWidget {
                     : "جاري التحميل...",
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BusCompanyDashboard(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.dashboard, color: Colors.white),
+                label: const Text(
+                  "لوحة التحكم ",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
               height: 55,

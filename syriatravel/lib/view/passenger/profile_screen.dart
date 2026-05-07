@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:syriatravel/bot/trips_sync_page.dart';
+import 'package:syriatravel/view/dashboard/admin_dashboard.dart';
 
 import '../../controllers/auth_controller.dart';
 
@@ -57,7 +57,36 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminDashboard()),
+                  );
+                },
+                icon: const Icon(Icons.dashboard, color: Colors.white),
+                label: const Text(
+                  "لوحة التحكم ",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 10),
 
             SizedBox(
               width: double.infinity,
@@ -83,15 +112,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => TripsSyncPage()),
-          );
-        },
-        child: Icon(Icons.dashboard),
       ),
     );
   }

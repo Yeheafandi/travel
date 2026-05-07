@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/core/constants/app_colors.dart';
+import 'package:syriatravel/view/dashboard/bus_company_dashboard.dart';
 import '../../controllers/auth_controller.dart';
 
 class DriverProfileScreen extends StatelessWidget {
@@ -86,6 +87,15 @@ class DriverProfileScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BusCompanyDashboard()),
+          );
+        },
+        child: Icon(Icons.dashboard),
       ),
     );
   }

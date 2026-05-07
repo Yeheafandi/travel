@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/route_manager.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syriatravel/core/constants/app_colors.dart';
 
@@ -121,10 +123,14 @@ class _BusCompanyDashboardState extends State<BusCompanyDashboard> {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 24,
                 backgroundColor: Colors.white24,
-                child: Icon(Icons.directions_bus_filled, color: Colors.white),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_outlined),
+                  color: Colors.white,
+                  onPressed: () => Get.back(),
+                ),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -147,7 +153,7 @@ class _BusCompanyDashboardState extends State<BusCompanyDashboard> {
                   ],
                 ),
               ),
-              _headerIcon(Icons.notifications_none_outlined),
+              _headerIcon(Icons.directions_bus_filled),
             ],
           ),
           const SizedBox(height: 22),

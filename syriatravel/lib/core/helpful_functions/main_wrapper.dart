@@ -26,6 +26,7 @@ class MainWrapper extends StatelessWidget {
     return Scaffold(
       body: Obx(
         () => IndexedStack(
+           
           index: navController.selectedIndex.value,
           children: screens,
         ),
@@ -39,7 +40,7 @@ class MainWrapper extends StatelessWidget {
       margin: const EdgeInsets.all(20),
       height: 70,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.primaryForeground,
         borderRadius: BorderRadius.circular(30),
         boxShadow: const [
           BoxShadow(

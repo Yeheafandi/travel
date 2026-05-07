@@ -4,10 +4,12 @@ import 'package:syriatravel/core/helpful_functions/main_wrapper.dart';
 import '../view/auth/login_screen.dart';
 import '../view/auth/register_screen.dart';
 import '../view/driver/driver_home.dart';
+import '../view/onboarding/onboarding_screen.dart';
 import '../view/role_selection_screen.dart';
 
 class AppRoutes {
   static const String initial = '/';
+  static const String onboarding = '/onboarding';
   static const String roleSelection = '/role-selection';
   static const String login = '/login';
   static const String register = '/register';
@@ -19,6 +21,12 @@ class AppRoutes {
       name: initial,
       page: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
+    ),
+
+    GetPage(
+      name: onboarding,
+      page: () => const OnboardingScreen(),
+      transition: Transition.fadeIn,
     ),
 
     GetPage(

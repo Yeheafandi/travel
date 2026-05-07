@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           ? (StorageService.getUserRole() == 'driver'
                 ? AppRoutes.driverHome
                 : AppRoutes.mainWrapper)
-          : AppRoutes.roleSelection,
+          : AppRoutes.onboarding,
 
       getPages: AppRoutes.routes,
 

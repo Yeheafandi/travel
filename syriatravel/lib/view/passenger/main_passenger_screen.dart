@@ -27,29 +27,31 @@ class PassengerHomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F7F9),
       body: RefreshIndicator(
         onRefresh: () async => await Future.delayed(const Duration(seconds: 1)),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              HomeHeader(
-                backgroundColor: primaryGreen,
-                userName: user?.displayName ?? "مسافر",
-              ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                HomeHeader(
+                  backgroundColor: primaryGreen,
+                  userName: user?.displayName ?? "مسافر",
+                ),
 
-              Transform.translate(
-                offset: const Offset(0, -40),
-                child: const SearchCard(),
-              ),
+                Transform.translate(
+                  offset: const Offset(0, -40),
+                  child: const SearchCard(),
+                ),
 
-              PassengerWidgets.buildSectionHeader(
-                title: "الرحلات المتاحة حالياً 🔥",
-                actionText: "عرض الكل",
-                onActionTap: () {},
-              ),
+                PassengerWidgets.buildSectionHeader(
+                  title: "الرحلات المتاحة حالياً 🔥",
+                  actionText: "عرض الكل",
+                  onActionTap: () {},
+                ),
 
-              _buildTripsStream(),
+                _buildTripsStream(),
 
-              const SizedBox(height: 100),
-            ],
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ),
       ),

@@ -24,9 +24,10 @@ class MainWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+      backgroundColor: Colors.white,
       body: Obx(
         () => IndexedStack(
-           
           index: navController.selectedIndex.value,
           children: screens,
         ),

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syriatravel/core/constants/app_colors.dart';
 import 'package:syriatravel/view/dashboard/bus_company_dashboard.dart';
-<<<<<<< HEAD
-=======
 
->>>>>>> c7318527461e9b3313af5eaf757aba8380633e1f
+
 import '../../controllers/auth_controller.dart';
 
 class DriverProfileScreen extends StatelessWidget {
